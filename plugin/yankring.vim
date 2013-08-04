@@ -1631,7 +1631,8 @@ function! YRMapsExpression(sid, motion, ...)
             " that place us in insert mode and record the
             " changes when insert mode ends.
             " let cmds .= a:sid. "yrrecord ".a:motion
-            let cmds .= a:sid. "yrrecord"
+            " let cmds .= a:sid. "yrrecord"
+            let cmds .= ":call YRRecord3()\n"
         endif
     endif
 
@@ -1735,7 +1736,10 @@ function! s:YRMapsCreate(...)
         let o_maps = split(g:yankring_o_keys)
         " Loop through and prompt the user for all buffer connection parameters.
         for key in o_maps
-            exec 'omap <expr>' key 'YRMapsExpression("<SID>", "'. escape(key,'\"'). '")'
+            " exec 'omap <expr>' key 'YRMapsExpression("<SID>", "'. escape(key,'\"'). '")'
+            let rhs = maparg(key, 'o')
+            let rhs = (empty(rhs)?(key):(rhs))
+            exec 'onoremap <silent> <expr>' key 'YRMapsExpression("<SID>", "'. escape(rhs,'\"'). '")'
         endfor
     endif
 
